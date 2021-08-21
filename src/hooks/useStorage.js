@@ -7,15 +7,16 @@ const useStorage = (file) => {
     const [url, setUrl] = useState(null);
 
     useEffect(() => {
-        const storageRef = projectStorage.storageRef(file.name);
+        const storageRef = projectStorage.ref();
+        var imageRef = storageRef.child(`images/${file.name}`);
 
-        storageRef.put(file).on('state_changed', (snap) => {
+        imageRef.put(file).on('state_changed', (snap) => {
             let percentage = (snap.bytesTransferred / snap.totalBytes) * 100;
             setProgress(percentage);
         }, (err) => {
             setError(err);
         }, async () => {
-            const url = await storageRef.getDownload();
+            const url = await imageRef.getDownloadURL();
             setUrl(url);
         })
     }, [file]);
